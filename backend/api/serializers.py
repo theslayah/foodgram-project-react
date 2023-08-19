@@ -11,7 +11,7 @@ from rest_framework.serializers import ModelSerializer
 from users.models import User, Subscribe
 
 
-class UserCreateSerializer(UserCreateSerializer):
+class CustomUserCreateSerializer(UserCreateSerializer):
     class Meta:
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
@@ -20,7 +20,7 @@ class UserCreateSerializer(UserCreateSerializer):
         )
 
 
-class UserSerializer(UserSerializer):
+class CustomUserSerializer(UserSerializer):
     is_subscribed = SerializerMethodField(read_only=True)
 
     class Meta:
@@ -229,8 +229,7 @@ class RecipeSerializer(ModelSerializer):
         instance.tags.set(tags)
         instance.ingredients.clear()
         self.create_ingredients_amounts(
-            recipe=instance, ingredients=ingredients
-            )
+            recipe=instance, ingredients=ingredients)
         instance.save()
         return instance
 
