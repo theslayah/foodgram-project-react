@@ -1,5 +1,4 @@
 from datetime import datetime
-from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -11,12 +10,12 @@ from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
-from .filters import IngredientFilter, RecipeFilter
-from .pagination import MyPagination
-from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
-from .serializers import (IngredientSerializer, TagSerializer,
-                          InfoRecipeSerializer, RecipeSerializer,
-                          RecipeGetSerializer)
+from api.filters import IngredientFilter, RecipeFilter
+from api.pagination import MyPagination
+from api.permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
+from api.serializers import (IngredientSerializer, TagSerializer,
+                             InfoRecipeSerializer, RecipeSerializer,
+                             RecipeGetSerializer)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
@@ -96,16 +95,8 @@ class RecipeViewSet(ModelViewSet):
     def download_shopping_cart(self, request):
         user = request.user
         ingredients_cart = (
-            IngredientFromRecipe.objects.filter(
-                recipe__shopping_cart__user=request.user
-            ).values(
-                'ingredient__name',
-                'ingredient__measurement_unit',
-            ).order_by(
-                'ingredient__name'
-            ).annotate(ingredient_value=Sum('amount'))
+            IngredientFromRecipe.get_ingredients_cart(user)
         )
-
         today = datetime.today()
         shopping_list = (
             f'Список покупок для: {user.get_full_name()}\n\n'

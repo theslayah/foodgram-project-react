@@ -84,7 +84,7 @@ class SubscribeSerializer(UserSerializer):
 class IngredientSerializer(ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = ('id', 'name', 'measurement_unit')
 
 
 class IngredientFromRecipeSerializer(ModelSerializer):
@@ -155,7 +155,6 @@ class RecipeGetSerializer(ModelSerializer):
 
 
 class RecipeSerializer(ModelSerializer):
-    """Сериализатор объектов класса Recipe при небезопасных запросах."""
     ingredients = IngredientFromRecipeSerializer(many=True)
     image = Base64ImageField(use_url=True, max_length=None)
     author = UserSerializer(read_only=True)
