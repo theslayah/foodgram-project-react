@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
+from datetime import datetime
 from django.db import models
-from django.db.models import UniqueConstraint
+from django.db.models import UniqueConstraint, Sum
 
 
 User = get_user_model()
@@ -125,15 +126,35 @@ class IngredientFromRecipe(models.Model):
         return (f'{self.recipe}: {self.ingredient.name},'
                 f' {self.amount}, {self.ingredient.measurement_unit}')
 
-    def get_ingredients_cart(user):
-        return IngredientFromRecipe.objects.filter(
-            recipe__shopping_cart__user=user
-        ).values(
-            'ingredient__name',
-            'ingredient__measurement_unit'
-        ).order_by(
-            'ingredient__name'
-        ).annotate(ingredient_value=models.Sum('amount'))
+    @classmethod
+    def generate_shopping_list(cls, user):
+        ingredients_cart = (
+            cls.objects.filter(
+                recipe__shopping_cart__user=user
+            ).values(
+                'ingredient__name',
+                'ingredient__measurement_unit',
+            ).order_by(
+                'ingredient__name'
+            ).annotate(ingredient_value=Sum('amount'))
+        )
+
+        today = datetime.today()
+        shopping_list = (
+            f'Список покупок для: {user.get_full_name()}\n\n'
+            f'Дата: {today:%Y-%m-%d}\n\n'
+        )
+        shopping_list += '\n'.join(
+            [
+                f'- {ingredient["ingredient__name"]} '
+                f'({ingredient["ingredient__measurement_unit"]})'
+                f' - {ingredient["ingredient_value"]}'
+                for ingredient in ingredients_cart
+            ]
+        )
+        shopping_list += f'\n\nFoodgram ({today:%Y})'
+
+        return shopping_list
 
 
 class Favourite(models.Model):
