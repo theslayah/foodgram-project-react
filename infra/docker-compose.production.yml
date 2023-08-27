@@ -14,8 +14,7 @@ services:
       - pg_data:/var/lib/postgresql/data/
 
   backend:
-    # image: baccepman/foodgram_backend
-    build: ../backend/
+    image: baccepman/foodgram_backend
     env_file: ../.env
     volumes:
       - static:/app/backend_static/static
@@ -24,16 +23,14 @@ services:
       - db
 
   frontend:
-    # image: baccepman/foodgram_frontend
-    build: ../frontend/
+    image: baccepman/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
       - backend
 
   nginx:
-    # image: nginx:1.19.3
-    build: .
+    image: baccepman/foodgram_nginx
     env_file: ../.env
     ports:
       - "80:80"
