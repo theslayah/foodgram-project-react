@@ -1,11 +1,18 @@
 from django.contrib.admin import ModelAdmin, register
-
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
 from recipes.models import (Ingredient, Tag, Recipe, IngredientFromRecipe,
                             Favourite, ShoppingCart)
 
 
+class IngredientResource(resources.ModelResource):
+    class Meta:
+        model = Ingredient
+
+
 @register(Ingredient)
-class IngredientAdmin(ModelAdmin):
+class IngredientAdmin(ImportExportModelAdmin, ModelAdmin):
+    resource_classes = [IngredientResource]
     list_display = ('name', 'measurement_unit')
     search_fields = ('name',)
 
