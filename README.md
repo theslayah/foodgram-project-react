@@ -83,6 +83,26 @@ http://feedgram.onthewifi.com:7000/admin
 ### Проект:
 http://feedgram.onthewifi.com:7000/
 
+### Суперпользователь:
+```
+login: admin
+email: admin@admin.ru
+password: admin123
+```
+
+### Тестовые пользователи:
+```
+login: user1
+email: user1@user.ru
+password: user321456
+```
+
+```
+login: user2
+email: user2@user.ru
+password: user123456
+```
+
 ## Авторы:
 - Frontend: YandexMaster
 - Backend & Devploy: theslayah 
